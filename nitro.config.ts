@@ -35,7 +35,8 @@ export default defineConfig({
   routeRules: {
     "/api/**": {
       cors: {
-        origin: process.env.CORS_ORIGINS?.split(",")
+        origin: (process.env.CORS_ORIGINS ?? "http://localhost:5173")
+          .split(",")
           .map((origin) => origin.trim())
           .filter(Boolean),
         credentials: true,
