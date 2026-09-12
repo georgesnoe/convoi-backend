@@ -2,6 +2,8 @@ import { randomUUID } from "crypto";
 import {
   boolean,
   index,
+  integer,
+  jsonb,
   pgEnum,
   pgTable,
   text,
@@ -10,6 +12,13 @@ import {
 
 export const userRole = pgEnum("user_role", ["admin", "user"]);
 export const userType = pgEnum("user_type", ["conductor", "passenger"]);
+export const vehicleType = pgEnum("vehicle_type", [
+  "motorcycle",
+  "car",
+  "bus",
+  "bicycle",
+]);
+export const tripFrequency = pgEnum("trip_frequency", ["once", "weekly"]);
 
 export const users = pgTable("user", {
   id: text("id")
@@ -113,4 +122,64 @@ export const verifications = pgTable(
       .notNull(),
   },
   (table) => [index("verification_identifier_idx").on(table.identifier)],
+);
+
+export const vehicles = pgTable(
+  "vehicle",
+  {
+    id: text("id")
+      .primaryKey()
+      .$default(() => randomUUID()),
+    ownerId: text("ownerId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: vehicleType("type").notNull(),
+    totalCapacity: integer("totalCapacity"),
+    registration: text("registration").notNull(),
+    createdAt: timestamp("createdAt", { precision: 6, withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updatedAt", { precision: 6, withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [index("vehicle_ownerId_idx").on(table.ownerId)],
+);
+
+export const trips = pgTable(
+  "trip",
+  {
+    id: text("id")
+      .primaryKey()
+      .$default(() => randomUUID()),
+    conductorId: text("conductorId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    vehicleId: text("vehicleId")
+      .notNull()
+      .references(() => vehicles.id, { onDelete: "cascade" }),
+    startTime: timestamp("startTime", {
+      precision: 6,
+      withTimezone: true,
+    }).notNull(),
+    frequency: tripFrequency("frequency").notNull(),
+    startDate: timestamp("startDate", { precision: 6, withTimezone: true }),
+    weekDays: integer("weekDays"),
+    distance: integer("distance").notNull(),
+    startPoint: jsonb("startPoint")
+      .$type<{ lat: number; lng: number }>()
+      .notNull(),
+    destinationPoint: jsonb("destinationPoint")
+      .$type<{ lat: number; lng: number }>()
+      .notNull(),
+    createdAt: timestamp("createdAt", { precision: 6, withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updatedAt", { precision: 6, withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [index("trip_conductorId_idx").on(table.conductorId)],
 );
