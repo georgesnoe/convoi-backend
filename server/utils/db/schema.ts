@@ -183,3 +183,45 @@ export const trips = pgTable(
   },
   (table) => [index("trip_conductorId_idx").on(table.conductorId)],
 );
+
+export const reservations = pgTable(
+  "reservation",
+  {
+    id: text("id")
+      .primaryKey()
+      .$default(() => randomUUID()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    tripId: text("tripId")
+      .notNull()
+      .references(() => trips.id, { onDelete: "cascade" }),
+    startTime: timestamp("startTime", {
+      precision: 6,
+      withTimezone: true,
+    }).notNull(),
+    frequency: tripFrequency("frequency").notNull(),
+    startDate: timestamp("startDate", { precision: 6, withTimezone: true }),
+    weekDays: integer("weekDays"),
+    distance: integer("distance").notNull(),
+    startPoint: jsonb("startPoint")
+      .$type<{ lat: number; lng: number }>()
+      .notNull(),
+    destinationPoint: jsonb("destinationPoint")
+      .$type<{ lat: number; lng: number }>()
+      .notNull(),
+    confirmed: boolean("confirmed").default(false).notNull(),
+    amount: integer("amount").default(0).notNull(),
+    createdAt: timestamp("createdAt", { precision: 6, withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updatedAt", { precision: 6, withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("reservation_userId_idx").on(table.userId),
+    index("reservation_tripId_idx").on(table.tripId),
+  ],
+);

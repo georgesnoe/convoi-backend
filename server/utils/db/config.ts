@@ -7,12 +7,22 @@ const db0 = useDatabase();
 
 const relations = defineRelations(
   schema,
-  ({ one, many, users, sessions, accounts, vehicles, trips }) => ({
+  ({
+    one,
+    many,
+    users,
+    sessions,
+    accounts,
+    vehicles,
+    trips,
+    reservations,
+  }) => ({
     users: {
       sessions: many.sessions(),
       accounts: many.accounts(),
       vehicles: many.vehicles(),
       trips: many.trips(),
+      reservations: many.reservations(),
     },
     sessions: {
       user: one.users({ from: sessions.userId, to: users.id }),
@@ -27,6 +37,11 @@ const relations = defineRelations(
     trips: {
       conductor: one.users({ from: trips.conductorId, to: users.id }),
       vehicle: one.vehicles({ from: trips.vehicleId, to: vehicles.id }),
+      reservations: many.reservations(),
+    },
+    reservations: {
+      user: one.users({ from: reservations.userId, to: users.id }),
+      trip: one.trips({ from: reservations.tripId, to: trips.id }),
     },
   }),
 );
