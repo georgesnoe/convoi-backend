@@ -10,7 +10,7 @@ defineRouteMeta({
     tags: ["auth"],
     summary: "Sign up",
     description:
-      "Register a new user with name, email and password. Creates a credential account, signs the user in and sets the auth session cookie.",
+      "Register a new user with name, email and password. Optionally specify the user `type` (conductor or passenger, defaults to passenger). Creates a credential account, signs the user in and sets the auth session cookie.",
     requestBody: {
       required: true,
       content: {
@@ -26,6 +26,12 @@ defineRouteMeta({
                 format: "password",
                 minLength: 8,
                 maxLength: 100,
+              },
+              type: {
+                type: "string",
+                enum: ["conductor", "passenger"],
+                default: "passenger",
+                description: "User type, only relevant when role is `user`.",
               },
             },
           },
@@ -44,6 +50,7 @@ const signUpSchema = z.object({
   name: z.string().min(1).max(100),
   email: z.email(),
   password: z.string().min(8).max(100),
+  type: z.enum(["conductor", "passenger"]).default("passenger"),
 });
 
 export default defineHandler(async (event) => {
@@ -67,6 +74,7 @@ export default defineHandler(async (event) => {
       .values({
         name: body.name,
         email: body.email,
+        type: body.type,
       })
       .returning()
   )[0];

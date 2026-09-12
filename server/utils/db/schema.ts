@@ -1,5 +1,15 @@
 import { randomUUID } from "crypto";
-import { boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  index,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
+
+export const userRole = pgEnum("user_role", ["admin", "user"]);
+export const userType = pgEnum("user_type", ["conductor", "passenger"]);
 
 export const users = pgTable("user", {
   id: text("id")
@@ -9,6 +19,8 @@ export const users = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("emailVerified").default(false).notNull(),
   image: text("image"),
+  role: userRole("role").default("user").notNull(),
+  type: userType("type").default("passenger").notNull(),
   createdAt: timestamp("createdAt", { precision: 6, withTimezone: true })
     .defaultNow()
     .notNull(),

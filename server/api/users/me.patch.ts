@@ -10,7 +10,7 @@ defineRouteMeta({
     tags: ["users"],
     summary: "Update current user",
     description:
-      "Updates the profile of the authenticated user. Only `name` and `image` can be updated; all fields are optional. Pass `image: null` to remove the profile image.",
+      "Updates the profile of the authenticated user. Only `name`, `image` and `type` can be updated; all fields are optional. Pass `image: null` to remove the profile image.",
     requestBody: {
       required: true,
       content: {
@@ -20,6 +20,11 @@ defineRouteMeta({
             properties: {
               name: { type: "string", minLength: 1, maxLength: 100 },
               image: { type: "string", format: "uri", nullable: true },
+              type: {
+                type: "string",
+                enum: ["conductor", "passenger"],
+                description: "User type (conductor or passenger).",
+              },
             },
           },
         },
@@ -37,6 +42,7 @@ const updateProfileSchema = z
   .object({
     name: z.string().trim().min(1).max(100).optional(),
     image: z.url().nullable().optional(),
+    type: z.enum(["conductor", "passenger"]).optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
     message: "At least one field must be provided",
@@ -56,13 +62,14 @@ export default defineHandler(async (event) => {
       .set({
         ...(body.name !== undefined && { name: body.name }),
         ...(body.image !== undefined && { image: body.image }),
+        ...(body.type !== undefined && { type: body.type }),
       })
       .where(eq(users.id, session.user?.id as string))
       .returning()
   )[0];
 
   if (!updated) {
-    throw new HTTPError("User not found", { status: 404 });
+    throw new HTTPError({ message: "User not found", status: 404 });
   }
 
   return { user: updated };
