@@ -16,6 +16,7 @@ const relations = defineRelations(
     vehicles,
     trips,
     reservations,
+    messages,
   }) => ({
     users: {
       sessions: many.sessions(),
@@ -23,6 +24,14 @@ const relations = defineRelations(
       vehicles: many.vehicles(),
       trips: many.trips(),
       reservations: many.reservations(),
+      sentMessages: many.messages({
+        from: users.id,
+        to: messages.senderId,
+      }),
+      receivedMessages: many.messages({
+        from: users.id,
+        to: messages.receiverId,
+      }),
     },
     sessions: {
       user: one.users({ from: sessions.userId, to: users.id }),
@@ -42,6 +51,10 @@ const relations = defineRelations(
     reservations: {
       user: one.users({ from: reservations.userId, to: users.id }),
       trip: one.trips({ from: reservations.tripId, to: trips.id }),
+    },
+    messages: {
+      sender: one.users({ from: messages.senderId, to: users.id }),
+      receiver: one.users({ from: messages.receiverId, to: users.id }),
     },
   }),
 );

@@ -225,3 +225,31 @@ export const reservations = pgTable(
     index("reservation_tripId_idx").on(table.tripId),
   ],
 );
+
+export const messages = pgTable(
+  "message",
+  {
+    id: text("id")
+      .primaryKey()
+      .$default(() => randomUUID()),
+    senderId: text("senderId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    receiverId: text("receiverId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    textContent: text("textContent").notNull(),
+    isRead: boolean("isRead").default(false).notNull(),
+    createdAt: timestamp("createdAt", { precision: 6, withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updatedAt", { precision: 6, withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("message_senderId_idx").on(table.senderId),
+    index("message_receiverId_idx").on(table.receiverId),
+  ],
+);
