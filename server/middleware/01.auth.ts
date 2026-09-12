@@ -1,5 +1,14 @@
 import { defineMiddleware, HTTPError } from "nitro";
 import { getSession } from "~/server/utils/auth";
+import type { sessions, users } from "~/server/utils/db/schema";
+
+declare module "h3" {
+  interface H3EventContext {
+    session?: typeof sessions.$inferSelect & {
+      user: typeof users.$inferSelect | null;
+    };
+  }
+}
 
 /**
  * Auth middleware: resolves the session from the auth cookie and enforces
@@ -20,5 +29,4 @@ export default defineMiddleware(async (event) => {
   }
 
   event.context.session = session;
-  event.context.user = session.user;
 });
