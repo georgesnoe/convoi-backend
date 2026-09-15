@@ -1,0 +1,27 @@
+# Build stage
+FROM bun:1.4.2-alpine3.24 AS build
+WORKDIR /app
+
+# Install dependencies
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
+
+# Copy source
+COPY . .
+
+# Build the Nitro server (outputs to .output/)
+RUN bun run build
+
+# Runtime stage
+FROM bun:1.4.2-alpine3.24 AS runtime
+WORKDIR /app
+
+# Copy the built output
+COPY --from=build /app/.output ./.output
+
+# Port Nitro listens on
+ENV PORT=3000
+EXPOSE 3000
+
+# Start the server
+ENTRYPOINT ["bun", "run", "./.output/server/index.mjs"]
