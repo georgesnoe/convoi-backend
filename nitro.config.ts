@@ -3,6 +3,7 @@ import { defineConfig } from "nitro";
 export default defineConfig({
   serverDir: "./server",
   preset: "bun",
+  vercel: {},
   experimental: {
     database: true,
     openAPI: true,

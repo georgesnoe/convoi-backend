@@ -14,7 +14,7 @@ defineRouteMeta({
 });
 
 export default defineHandler((event) => {
-  const user = event.context.user;
+  const user = event.context.session?.user;
   if (!user) {
     throw new HTTPError("Unauthorized", { status: 401 });
   }

@@ -82,8 +82,9 @@ See the **[Getting Started guide](docs/getting-started.md)** for a detailed walk
 | `GET`    | `/api/oauth/callback/google` | Google OAuth callback     | public                    |
 | `GET`    | `/api/users/me`              | Current user profile      | authenticated             |
 | `PATCH`  | `/api/users/me`              | Update profile            | authenticated             |
+| `GET`    | `/api/users`                 | List all users            | admin                     |
 | `POST`   | `/api/vehicles`              | Create a vehicle          | conductor                 |
-| `GET`    | `/api/vehicles`              | List own vehicles         | authenticated             |
+| `GET`    | `/api/vehicles`              | List vehicles (own / all) | authenticated / admin     |
 | `PATCH`  | `/api/vehicles/:id`          | Update a vehicle          | owner                     |
 | `DELETE` | `/api/vehicles/:id`          | Delete a vehicle          | owner                     |
 | `POST`   | `/api/trips`                 | Create a trip             | conductor                 |
@@ -91,11 +92,11 @@ See the **[Getting Started guide](docs/getting-started.md)** for a detailed walk
 | `PATCH`  | `/api/trips/:id`             | Update a trip             | owner                     |
 | `DELETE` | `/api/trips/:id`             | Delete a trip             | owner                     |
 | `POST`   | `/api/reservations`          | Create a reservation      | authenticated             |
-| `GET`    | `/api/reservations`          | List visible reservations | passenger / vehicle owner |
+| `GET`    | `/api/reservations`          | List visible reservations | passenger / owner / admin |
 | `PATCH`  | `/api/reservations/:id`      | Update a reservation      | passenger / vehicle owner |
 | `DELETE` | `/api/reservations/:id`      | Delete a reservation      | passenger                 |
 | `POST`   | `/api/messages`              | Send a message            | authenticated             |
-| `GET`    | `/api/messages`              | List related messages     | sender / receiver         |
+| `GET`    | `/api/messages`              | List related messages     | sender / receiver / admin |
 | `PATCH`  | `/api/messages/:id`          | Update a message          | sender / receiver         |
 | `DELETE` | `/api/messages/:id`          | Delete a message          | sender                    |
 
