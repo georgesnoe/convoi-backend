@@ -1,5 +1,5 @@
 # Build stage
-FROM docker.io/dhi.io/bun:1.4.2-alpine3.24 AS build
+FROM docker.io/oven/bun:1.4.2-alpine AS build
 WORKDIR /app
 
 # Install dependencies
@@ -13,7 +13,7 @@ COPY . .
 RUN bun run build
 
 # Runtime stage
-FROM docker.io/dhi.io/bun:1.4.2-alpine3.24 AS runtime
+FROM docker.io/oven/bun:1.4.2-alpine AS runtime
 WORKDIR /app
 
 # Copy the built output
