@@ -35,7 +35,7 @@ export async function createSession(event: H3Event, userId: string) {
   setCookie(event, SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     secure: true,
-    sameSite: "lax",
+    sameSite: "none",
     path: "/",
     maxAge: SESSION_DURATION_MS / 1000,
   });
