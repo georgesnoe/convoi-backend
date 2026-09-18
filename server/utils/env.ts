@@ -13,4 +13,4 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().min(1, "GOOGLE_CLIENT_SECRET is required"),
 });
 
-export const env = envSchema.parse(Bun.env);
+export const env = envSchema.parse(process.env);
