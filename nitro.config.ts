@@ -34,13 +34,14 @@ export default defineConfig({
     },
   },
   routeRules: {
-    "/api/**": {
+    "/**": {
       cors: {
         origin: (process.env.CORS_ORIGINS ?? "http://localhost:5173")
           .split(",")
           .map((origin) => origin.trim())
           .filter(Boolean),
         credentials: true,
+        exposeHeaders: [],
         methods: ["GET", "POST", "HEAD", "PUT", "PATCH", "DELETE", "OPTIONS"],
         allowHeaders: ["Content-Type", "Authorization"],
       },
